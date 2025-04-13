@@ -1,6 +1,7 @@
-const APP_VERSION = "0.1.3";
+const APP_VERSION = "0.1.5";
 const PROJECT_FOLDER = '"GTD/projects"';
 const dv = app.plugins.plugins.dataview?.api; // Access Dataview API if available
+let THIS_PLUGIN;
 
 
 function display_active_count(el) {
@@ -38,16 +39,17 @@ function display_button(el) {
 
 function handleButtonClick() {
   console.log("Button was clicked!");
+  forceReload();
   // Add any behavior you want here
 }
 
 
 
 
-async function forceReload(plugin) {
-  const id = plugin.manifest.id;
-  await plugin.app.plugins.disablePlugin(id);
-  await plugin.app.plugins.enablePlugin(id);
+async function forceReload() {
+  const id = THIS_PLUGIN.manifest.id;
+  await THIS_PLUGIN.app.plugins.disablePlugin(id);
+  await THIS_PLUGIN.app.plugins.enablePlugin(id);
 }
 
 
@@ -57,13 +59,24 @@ module.exports = class ChrispyGTD extends require('obsidian').Plugin {
 
   async onload() {
     console.log("Chrispy GTD plugin loaded! Version: " + APP_VERSION);
+    THIS_PLUGIN = this;
 
-    // Register a custom Markdown post-processor for multiline ```...``` commands
+    // Register a custom Markdown post-processor for multiline commands like:
+    // ```chrispy-gtd
+    // some-command-goes-here
+    // additional command argument
+    // yet_another_command_argument
+    // each line is another argument.
+    // ```
     this.registerMarkdownCodeBlockProcessor("chrispy-gtd", async (source, el, ctx) => {
-      console.log("...attempting multi line command");
+      console.log("...attempting multi line command, source: " + source);
 
       // Parse the source block content (e.g., commands)
       const [command, ...args] = source.trim().split("\n");
+
+      for (const arg of args) {
+        console.log("...argument: " + arg);
+      }
 
 
       if (!dv) {
