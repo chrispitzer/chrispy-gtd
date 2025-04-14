@@ -1,19 +1,13 @@
 import { Plugin } from 'obsidian';
-import { h, Fragment, render } from 'preact';
+import { render } from 'preact';
 import { ActiveList } from './views/activeList.tsx';
+import { ActiveCount } from './views/activeCount.tsx';
+import { APP_VERSION, PROJECT_FOLDER } from './config';
+import { getDataview } from './context';
 
-const APP_VERSION = "0.1.5";
-const PROJECT_FOLDER = '"GTD/projects"';
+let done_dv_check = false;
+
 let THIS_PLUGIN: Plugin;
-const dv = app.plugins.plugins.dataview?.api;
-
-function display_active_count(el: HTMLElement) {
-  console.log("attempting active count");
-  const count = dv.pages(PROJECT_FOLDER)
-    .where(p => p.status === "active")
-    .length;
-  el.innerHTML = `Active Projects: ${count}`;
-}
 
 function display_button(el: HTMLElement) {
   el.innerHTML = `
@@ -44,21 +38,24 @@ module.exports = class ChrispyGTD extends Plugin {
     this.registerMarkdownCodeBlockProcessor("chrispy-gtd", async (source, el) => {
       const [command] = source.trim().split("\n");
 
-      if (!dv) {
-        el.innerHTML = "Dataview plugin not available.";
-        return;
+      if (!done_dv_check) {
+        const dv = getDataview();
+        if (!dv) {
+          el.innerHTML = "Dataview plugin not available.";
+          return;
+        }
+        done_dv_check = true;
       }
 
       if (command === "active-count") {
-        display_active_count(el);
+        render(<ActiveCount />, el);
+
       } else if (command === "display-button") {
         display_button(el);
-      } else if (command === "active-list") {
-        const projects = dv.pages(PROJECT_FOLDER)
-          .where(p => p.status === "active")
-          .map(p => p.file.name);
 
-        render(<ActiveList projects={projects} />, el);
+      } else if (command === "active-list") {
+        render(<ActiveList />, el);
+
       } else {
         el.innerHTML = `Unknown command: ${command}`;
       }

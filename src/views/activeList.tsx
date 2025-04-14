@@ -1,8 +1,14 @@
-type Props = {
-  projects: string[];
-};
+import { getDataview } from '../context';
+import { PROJECT_FOLDER } from '../config';
 
-export function ActiveList({ projects }: Props) {
+
+export function ActiveList() {
+  const dv = getDataview();
+
+  const projects: string[] = dv.pages(PROJECT_FOLDER)
+    .where(p => p.status === "active")
+    .map(p => p.file.name);
+
   return (
     <div class="p-4">
       <h2 class="text-lg font-bold mb-2">Active Projects</h2>
