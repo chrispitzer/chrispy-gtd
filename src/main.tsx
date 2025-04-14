@@ -30,7 +30,7 @@ module.exports = class ChrispyGTD extends Plugin {
       if (command === "active-count") {
         render(<ActiveCount />, el);
 
-      } else if (command === "display-button") {
+      } else if (command === "force-reload-button") {
         render(<ForceReloadButton plugin={this} />, el);
 
       } else if (command === "active-list") {
