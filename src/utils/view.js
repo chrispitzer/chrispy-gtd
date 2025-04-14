@@ -1,7 +1,7 @@
 import htm from './htm.module.js';
 
 // Simple hyperscript-style DOM creator (no virtual DOM)
-export function h(tag, props = {}, ...children) {
+function h(tag, props = {}, ...children) {
     const el = document.createElement(tag);
 
     for (const [key, value] of Object.entries(props || {})) {
@@ -14,7 +14,10 @@ export function h(tag, props = {}, ...children) {
         }
     }
 
-    children.flat().forEach(child => {
+    // Flatten deeply and filter out null/undefined
+    const flatChildren = children.flat(Infinity).filter(Boolean);
+
+    flatChildren.forEach(child => {
         if (typeof child === 'string' || typeof child === 'number') {
             el.appendChild(document.createTextNode(child));
         } else if (child instanceof Node) {
@@ -24,6 +27,7 @@ export function h(tag, props = {}, ...children) {
 
     return el;
 }
+
 
 // Bind htm to our hyperscript function
 export const html = htm.bind(h);

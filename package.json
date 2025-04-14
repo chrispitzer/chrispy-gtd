@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "description": "An Obsidian GTD-style project manager plugin",
   "dependencies": {
-    "htm": "^3.1.1"
+    "htm": "^3.1.1",
+    "preact": "^10.26.5"
   },
   "devDependencies": {
-    "esbuild": "^0.25.2"
+    "esbuild": "^0.25.2",
+    "esbuild-plugin-jsx": "^1.0.1"
   },
   "scripts": {
     "build": "node build.js"
