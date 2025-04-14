@@ -1,0 +1,14 @@
+{
+  "name": "chrispy-gtd",
+  "version": "0.1.0",
+  "description": "An Obsidian GTD-style project manager plugin",
+  "dependencies": {
+    "htm": "^3.1.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.2"
+  },
+  "scripts": {
+    "build": "node build.js"
+  }
+}
